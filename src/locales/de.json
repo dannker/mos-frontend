@@ -1747,5 +1747,17 @@
   "select path": "Pfad auswählen",
   "timers": "Zeiten",
   "seconds": "Sekunden",
-  "enabling/disabling nut service is located on the network settings page": "Das Aktivieren/Deaktivieren des NUT-Dienstes befindet sich auf der Seite Netzwerkeinstellungen"
+  "enabling/disabling nut service is located on the network settings page": "Das Aktivieren/Deaktivieren des NUT-Dienstes befindet sich auf der Seite Netzwerkeinstellungen",
+  "loadhistory": "Systemlast Verlauf",
+  "load current": "Aktuelle Last",
+  "load avg5min": "5-Min-Durchschnitt",
+  "load avg15min": "15-Min-Durchschnitt",
+  "current": "Aktuell",
+  "1 min": "1 Min",
+  "5 min": "5 Min",
+  "15 min": "15 Min",
+  "high load": "Hohe Last",
+  "moderate load": "Moderate Last",
+  "low load": "Geringe Last",
+  "body": "Körper"
 }

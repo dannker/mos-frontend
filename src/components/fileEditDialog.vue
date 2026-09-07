@@ -106,7 +106,8 @@ const loadFile = async () => {
   errorMessage.value = '';
 
   try {
-    const url = new URL('/api/v1/mos/readfile', window.location.origin);
+    const baseUrl = __API_BASE_URL__ || window.location.origin;
+    const url = new URL('/api/v1/mos/readfile', baseUrl);
     url.searchParams.set('path', props.path);
 
     const res = await fetch(url, {

@@ -85,7 +85,8 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
       return;
     }
 
-    socket = io('/docker', {
+    const wsUrl = __WS_BASE_URL__ || '';
+    socket = io(wsUrl ? `${wsUrl}/docker` : '/docker', {
       path: '/api/v1/socket.io/',
       transports: ['websocket'],
       upgrade: false,

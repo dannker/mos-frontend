@@ -166,7 +166,7 @@
   <v-fab @click="setNotificationProviders()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
   </v-fab>
-
+  
 </template>
 
 <script setup>
@@ -449,9 +449,7 @@ const buildEmailPayload = () => {
   const emailProvider = providers.value[EMAIL_PROVIDER] || getDefaultEmailProvider();
   const parseAlertMapping = safeParse(jsonEditors.value[EMAIL_PROVIDER]?.alert_mapping ?? '{}');
   const sender = String(emailProvider.from ?? '').trim();
-  const receivers = (Array.isArray(emailProvider.to) ? emailProvider.to : [])
-    .map((item) => String(item || '').trim())
-    .filter((item) => item.length > 0);
+  const receivers = (Array.isArray(emailProvider.to) ? emailProvider.to : []).map((item) => String(item || '').trim()).filter((item) => item.length > 0);
 
   if (!parseAlertMapping.valid) {
     throw new Error(`${t('invalid provider json')}|$|${EMAIL_PROVIDER}: alert_mapping`);

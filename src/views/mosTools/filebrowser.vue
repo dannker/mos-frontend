@@ -554,7 +554,8 @@ const handleFsSelected = (item) => {
 const loadPath = async (path = '/') => {
   loading.value = true;
   try {
-    const url = new URL('/api/v1/mos/fsnavigator', window.location.origin);
+    const baseUrl = __API_BASE_URL__ || window.location.origin;
+    const url = new URL('/api/v1/mos/fsnavigator', baseUrl);
     if (path && path !== '/') {
       url.searchParams.set('path', path);
     }

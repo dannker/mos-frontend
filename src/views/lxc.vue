@@ -367,12 +367,12 @@ const getLXCs = async () => {
           Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         },
       }),
-      fetch('api/v1/lxc/mos/containers', {
+      fetch('/api/v1/lxc/mos/containers', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         },
       }),
-      fetch('api/v1/lxc/containers/usage', {
+      fetch('/api/v1/lxc/containers/usage', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         },
@@ -901,7 +901,8 @@ const getLXCWS = () => {
     socket = null;
   }
 
-  socket = io('/lxc', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
+  const wsUrl = __WS_BASE_URL__ || '';
+  socket = io(wsUrl ? `${wsUrl}/lxc` : '/lxc', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
 
   socket.on('connect', () => {
     socket.emit('subscribe-container-usage', { token: authToken });

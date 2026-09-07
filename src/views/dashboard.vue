@@ -103,6 +103,7 @@ import Voltage from '../components/cards/voltage.vue';
 import PSU from '../components/cards/psu.vue';
 import Other from '../components/cards/other.vue';
 import Nut from '../components/cards/nut.vue';
+import LoadHistory from '../components/cards/loadHistory.vue';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const i18n = useI18n();
@@ -122,6 +123,7 @@ const components = shallowRef({
   psu: PSU,
   other: Other,
   nut: Nut,
+  loadhistory: LoadHistory,
 });
 const pluginLabels = ref({});
 
@@ -139,13 +141,14 @@ const isConnected = ref({});
 const error = ref(null);
 const left = ref([]);
 const right = ref([]);
-const BUILTIN_WIDGETS = ['os', 'processor', 'pools', 'network', 'memory', 'disks', 'fan', 'temperature', 'power', 'voltage', 'psu', 'nut', 'other'];
+const BUILTIN_WIDGETS = ['os', 'processor', 'loadhistory', 'pools', 'network', 'memory', 'disks', 'fan', 'temperature', 'power', 'voltage', 'psu', 'nut', 'other'];
 const ALL_WIDGETS = ref([...BUILTIN_WIDGETS]);
-const DEFAULT_LEFT = [{ id: 'os' }, { id: 'processor' }, { id: 'pools' }, { id: 'fan' }, { id: 'voltage' }, { id: 'psu' }];
+const DEFAULT_LEFT = [{ id: 'os' }, { id: 'processor' }, { id: 'loadhistory' }, { id: 'pools' }, { id: 'fan' }, { id: 'voltage' }, { id: 'psu' }];
 const DEFAULT_RIGHT = [{ id: 'network' }, { id: 'memory' }, { id: 'disks' }, { id: 'temperature' }, { id: 'power' }, { id: 'nut' }, { id: 'other' }];
 const DEFAULT_VISIBILITY = {
   os: true,
   processor: true,
+  loadhistory: true,
   pools: true,
   network: true,
   memory: true,
@@ -359,6 +362,8 @@ const widgetProps = (id) => {
   switch (id) {
     case 'processor':
       return { cpu: cpu.value, temperature: temperature.value, osInfo: osInfo.value };
+    case 'loadhistory':
+      return { cpu: cpu.value };
     case 'network':
       return { network: network.value };
     case 'memory':
@@ -389,10 +394,10 @@ const getData = async () => {
   try {
     const auth = localStorage.getItem('authToken');
     const [res, resPools, resOs, resSensors] = await Promise.all([
-      fetch('/api/v1/system/load', { headers: { Authorization: 'Bearer ' + auth } }),
-      fetch('/api/v1/pools', { headers: { Authorization: 'Bearer ' + auth } }),
-      fetch('/api/v1/mos/osinfo', { headers: { Authorization: 'Bearer ' + auth } }),
-      fetch('/api/v1/mos/sensors', { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch(`/api/v1/system/load`, { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch(`/api/v1/pools`, { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch(`/api/v1/mos/osinfo`, { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch(`/api/v1/mos/sensors`, { headers: { Authorization: 'Bearer ' + auth } }),
     ]);
 
     if (res.ok) {
@@ -439,8 +444,9 @@ const initWebSockets = () => {
     return;
   }
 
-  socket = io('/system', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
-  nutSocket = io('/nut', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
+  const wsUrl = __WS_BASE_URL__ || '';
+  socket = io(wsUrl ? `${wsUrl}/system` : '/system', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
+  nutSocket = io(wsUrl ? `${wsUrl}/nut` : '/nut', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
 
   socket.on('connect', () => {
     isConnected.value = true;

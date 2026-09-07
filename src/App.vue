@@ -562,7 +562,15 @@ const unsubscribePush = async () => {
 // WS START --------------------------------------
 function connectNotificationWS() {
   cleanupWS();
-  ws = new WebSocket('/api/v1/notify');
+  let wsUrl;
+  if (__WS_BASE_URL__) {
+    wsUrl = `${__WS_BASE_URL__}/api/v1/notify`;
+  } else {
+    // Fallback for production: use current location with ws protocol
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    wsUrl = `${protocol}//${window.location.host}/api/v1/notify`;
+  }
+  ws = new WebSocket(wsUrl);
 
   ws.onopen = () => {
     reconnectAttempts = 0;

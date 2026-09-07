@@ -537,7 +537,8 @@ onMounted(() => {
 const getMosHub = async (search, limit = 24, skip = 0, order = hubOrderSel.value, sort = hubSortingSel.value, type = hubTypeSel.value, category = hubCategoriesSel.value) => {
   hubLoading.value = true;
   try {
-    const url = new URL('/api/v1/mos/hub/index', window.location.origin);
+    const baseUrl = __API_BASE_URL__ || window.location.origin;
+    const url = new URL('/api/v1/mos/hub/index', baseUrl);
     url.searchParams.append('search', search || '');
     url.searchParams.append('order', order);
     url.searchParams.append('sort', sort);

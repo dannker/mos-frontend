@@ -5,6 +5,29 @@ import App from './App.vue';
 import '@mdi/font/css/materialdesignicons.css';
 
 window.__VUE__ = Vue;
+
+// Global fetch wrapper to handle API URLs in development
+const originalFetch = window.fetch;
+const apiBase = typeof __API_BASE_URL__ !== 'undefined' ? __API_BASE_URL__ : '';
+
+// Make API base URL globally available
+if (apiBase) {
+  globalThis.__API_BASE_URL__ = apiBase;
+}
+
+window.fetch = function(...args) {
+  let [resource, config] = args;
+  
+  // If resource is a string and starts with /api, prepend the API base URL
+  if (typeof resource === 'string' && resource.startsWith('/api')) {
+    if (apiBase && !resource.startsWith('http')) {
+      resource = apiBase + resource;
+    }
+  }
+  
+  return originalFetch(resource, config);
+};
+
 import { createI18n } from 'vue-i18n';
 import de from './locales/de.json';
 import en from './locales/en.json';

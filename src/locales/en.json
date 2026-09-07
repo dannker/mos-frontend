@@ -1747,5 +1747,17 @@
   "select path": "Select path",
   "timers": "Timers",
   "seconds": "Seconds",
-  "enabling/disabling nut service is located on the network settings page": "Enabling/disabling NUT service is located on the network settings page"
+  "enabling/disabling nut service is located on the network settings page": "Enabling/disabling NUT service is located on the network settings page",
+  "loadhistory": "System Load History",
+  "load current": "Current Load",
+  "load avg5min": "5 Min Average",
+  "load avg15min": "15 Min Average",
+  "current": "Current",
+  "1 min": "1 Min",
+  "5 min": "5 Min",
+  "15 min": "15 Min",
+  "high load": "High Load",
+  "moderate load": "Moderate Load",
+  "low load": "Low Load",
+  "body": "Body"
 }

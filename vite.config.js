@@ -10,6 +10,8 @@ const WS_TARGET = 'ws://mos-test.home';
 
 export default defineConfig({
   define: {
+    '__API_BASE_URL__': JSON.stringify(process.env.VITE_API_BASE_URL || (process.env.NODE_ENV === 'development' ? API_TARGET : '')),
+    '__WS_BASE_URL__': JSON.stringify(process.env.VITE_WS_BASE_URL || (process.env.NODE_ENV === 'development' ? WS_TARGET : '')),
     '__BUNDLED_DEV__': true,
     '__SERVER_FORWARD_CONSOLE__': false,
   },

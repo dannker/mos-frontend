@@ -1338,7 +1338,8 @@ const getLoadWS = () => {
     return;
   }
 
-  socket = io('/vm', {
+  const wsUrl = __WS_BASE_URL__ || '';
+  socket = io(wsUrl ? `${wsUrl}/vm` : '/vm', {
     path: '/api/v1/socket.io/',
     transports: ['websocket'],
     upgrade: false,
@@ -1643,7 +1644,8 @@ const deleteVM = async () => {
   try {
     overlay.value = true;
 
-    const url = new URL(`/api/v1/vm/machines/${deleteVmData.value.name}`, window.location.origin);
+    const baseUrl = __API_BASE_URL__ || window.location.origin;
+    const url = new URL(`/api/v1/vm/machines/${deleteVmData.value.name}`, baseUrl);
     if (deleteVmData.value.removeDisks) {
       url.searchParams.set('removeDisks', 'true');
     }
