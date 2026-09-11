@@ -103,6 +103,8 @@
   "docker container updated successfully": "Docker Container erfolgreich aktualisiert",
   "docker container order could not be saved": "Sortierung konnte nicht gespeichert werden",
   "docker container order saved successfully": "Sortierung gespeichert",
+  "warning: container with this name already exists, this will overwrite the existing container": "Warnung: Ein Container mit diesem Namen existiert bereits, dieser wird den bestehenden Container überschreiben",
+  "it would be overwritten": "Er würde überschrieben",
   "api token": "API Token",
   "api token copied to clipboard": "API Token in die Zwischenablage kopiert",
   "failed to copy api token": "Kopieren des API Token fehlgeschlagen",

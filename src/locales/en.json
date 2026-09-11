@@ -103,6 +103,8 @@
   "docker container updated successfully": "Docker container updated successfully",
   "docker container order could not be saved": "Docker container order could not be saved",
   "docker container order saved successfully": "Docker container order saved successfully",
+  "warning: container with this name already exists, this will overwrite the existing container": "Warning: A container with this name already exists, this will overwrite the existing container",
+  "it would be overwritten": "It would be overwritten",
   "api token": "API Token",
   "api token copied to clipboard": "API token copied to clipboard",
   "failed to copy api token": "Failed to copy API token",

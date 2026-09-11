@@ -103,6 +103,8 @@
   "docker container updated successfully": "Conteneur Docker mis à jour avec succès",
   "docker container order could not be saved": "Impossible de sauvegarder l'ordre des conteneurs Docker",
   "docker container order saved successfully": "Ordre des conteneurs Docker sauvegardé avec succès",
+  "warning: container with this name already exists, this will overwrite the existing container": "Attention: Un conteneur avec ce nom existe déjà, cela écrasera le conteneur existant",
+  "it would be overwritten": "Il serait écrasé",
   "api token": "Jeton API",
   "api token copied to clipboard": "Jeton API copié dans le presse-papiers",
   "failed to copy api token": "Échec de la copie du jeton API",
