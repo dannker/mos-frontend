@@ -49,17 +49,11 @@
                       </template>
                       <v-list-item-title>{{ $t('delete pool') }}</v-list-item-title>
                     </v-list-item>
-                    <v-list-item @click="wakePool(pool)">
+                    <v-list-item @click="openSpinDialog(pool)">
                       <template #prepend>
-                        <v-icon size="18">mdi-motion-play</v-icon>
+                        <v-icon size="18">mdi-sleep</v-icon>
                       </template>
-                      <v-list-item-title>{{ $t('spin up pool') }}</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="sleepPool(pool)">
-                      <template #prepend>
-                        <v-icon size="18">mdi-motion-pause</v-icon>
-                      </template>
-                      <v-list-item-title>{{ $t('spin down pool') }}</v-list-item-title>
+                      <v-list-item-title>{{ $t('wake up / sleep') }}</v-list-item-title>
                     </v-list-item>
                     <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
                     <v-list-item v-if="pool.type === 'mergerfs'" @click="openManageMergerfsDevicesDialog(pool)">
@@ -763,6 +757,27 @@
     </v-card>
   </v-dialog>
 
+  <!-- Sleep / Wake Dialog -->
+  <v-dialog v-model="spinDialog.value" max-width="400">
+    <v-card class="pa-0" :title="t('wake up / sleep')" prepend-icon="mdi-sleep" style="max-height: 60vh; display: flex; flex-direction: column">
+      <v-card-text style="overflow: auto">
+        <div class="d-flex flex-column gap-3">
+          <v-btn @click="performSpinAction('up')" color="green" variant="tonal" prepend-icon="mdi-motion-play" size="large" class="w-100 mb-4 mt-4">
+            {{ $t('spin up pool') }}
+          </v-btn>
+          <v-btn @click="performSpinAction('down')" color="blue" variant="tonal" prepend-icon="mdi-motion-pause" size="large" class="w-100">
+            {{ $t('spin down pool') }}
+          </v-btn>
+        </div>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions style="flex-shrink: 0">
+        <v-spacer></v-spacer>
+        <v-btn @click="spinDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Manage Mergerfs Devices Dialog -->
   <v-dialog v-model="manageMergerfsDevicesDialog.value" max-width="700">
     <v-card class="pa-0" :title="t('manage devices')" prepend-icon="mdi-harddisk" style="max-height: 70vh; display: flex; flex-direction: column">
@@ -858,7 +873,11 @@
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-select
           v-model="addParityDevicesDialog.devices"
-          :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => ({ title: `${disk.device} (${disk.storage.totalSpace_human}) (${disk.diskInfo.diskSerial ? disk.diskInfo.diskSerial : '—'})`, value: disk.device })) : []"
+          :items="
+            Array.isArray(unassignedDisks)
+              ? unassignedDisks.map((disk) => ({ title: `${disk.device} (${disk.storage.totalSpace_human}) (${disk.diskInfo.diskSerial ? disk.diskInfo.diskSerial : '—'})`, value: disk.device }))
+              : []
+          "
           item-title="title"
           item-value="value"
           :label="$t('devices')"
@@ -901,7 +920,10 @@
             v-model="removeParityDevicesDialog.devices"
             :items="
               removeParityDevicesDialog.pool
-                ? removeParityDevicesDialog.pool.parity_devices.map((device) => ({ title: `${device.device} (${device.storage.totalSpace_human}) (${device.diskInfo.diskSerial ? device.diskInfo.diskSerial : '—'})`, value: device.device }))
+                ? removeParityDevicesDialog.pool.parity_devices.map((device) => ({
+                    title: `${device.device} (${device.storage.totalSpace_human}) (${device.diskInfo.diskSerial ? device.diskInfo.diskSerial : '—'})`,
+                    value: device.device,
+                  }))
                 : []
             "
             item-title="title"
@@ -932,7 +954,10 @@
             v-model="replaceParityDeviceDialog.oldDevice"
             :items="
               replaceParityDeviceDialog.pool
-                ? replaceParityDeviceDialog.pool.parity_devices.map((device) => ({ title: `${device.device} (${device.storage.totalSpace_human}) (${device.diskInfo.diskSerial ? device.diskInfo.diskSerial : '—'})`, value: device.device }))
+                ? replaceParityDeviceDialog.pool.parity_devices.map((device) => ({
+                    title: `${device.device} (${device.storage.totalSpace_human}) (${device.diskInfo.diskSerial ? device.diskInfo.diskSerial : '—'})`,
+                    value: device.device,
+                  }))
                 : []
             "
             item-title="title"
@@ -942,7 +967,11 @@
           />
           <v-select
             v-model="replaceParityDeviceDialog.newDevice"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => ({ title: `${disk.device} (${disk.storage.totalSpace_human}) (${disk.diskInfo.diskSerial ? disk.diskInfo.diskSerial : '—'})`, value: disk.device })) : []"
+            :items="
+              Array.isArray(unassignedDisks)
+                ? unassignedDisks.map((disk) => ({ title: `${disk.device} (${disk.storage.totalSpace_human}) (${disk.diskInfo.diskSerial ? disk.diskInfo.diskSerial : '—'})`, value: disk.device }))
+                : []
+            "
             item-title="title"
             item-value="value"
             :label="$t('new device')"
@@ -1375,6 +1404,10 @@ const formatDialog = reactive({
   partition: true,
   wipeExisting: true,
 });
+const spinDialog = reactive({
+  value: false,
+  pool: null,
+});
 const createPoolDialog = reactive({
   value: false,
   disk: null,
@@ -1653,6 +1686,20 @@ const openReplaceMergerfsDeviceDialog = (pool, oldDevice = null) => {
   replaceMergerfsDeviceDialog.oldDevice = oldDevice;
   replaceMergerfsDeviceDialog.newDevice = null;
   replaceMergerfsDeviceDialog.format = false;
+};
+const openSpinDialog = (pool) => {
+  spinDialog.value = true;
+  spinDialog.pool = pool;
+};
+const performSpinAction = (action) => {
+  if (spinDialog.pool) {
+    if (action === 'up') {
+      wakePool(spinDialog.pool);
+    } else if (action === 'down') {
+      sleepPool(spinDialog.pool);
+    }
+    spinDialog.value = false;
+  }
 };
 const openManageMergerfsDevicesDialog = (pool) => {
   manageMergerfsDevicesDialog.value = true;
